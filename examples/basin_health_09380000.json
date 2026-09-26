@@ -1,0 +1,20 @@
+{
+  "huc_code": null,
+  "generated_at": "2026-09-26T21:08:30Z",
+  "epa_compliance": {
+    "checked": 8,
+    "violations": 0,
+    "compliance_score": 100.0,
+    "per_parameter": {
+      "dissolved_oxygen": {
+        "n": 4,
+        "bad": 0
+      },
+      "ph": {
+        "n": 4,
+        "bad": 0
+      }
+    },
+    "violation_examples": []
+  }
+}
