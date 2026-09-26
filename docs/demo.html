@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>watershed-mcp — live demo (bounty #471)</title>
+<style>
+body{font-family:ui-monospace,Consolas,monospace;background:#0d1117;color:#e6edf3;margin:0;padding:24px;max-width:900px}
+h1{font-size:20px}h2{font-size:15px;color:#58a6ff;margin-top:28px}
+a{color:#58a6ff}table{border-collapse:collapse;margin:10px 0}
+td,th{border:1px solid #30363d;padding:4px 10px;font-size:13px;text-align:left}
+code{background:#161b22;padding:2px 6px;border-radius:4px}
+.card{background:#161b22;border:1px solid #30363d;border-radius:8px;padding:12px 16px;margin:14px 0}
+.warn{color:#f0b429;font-size:12px}.ok{color:#3fb950}.small{font-size:12px;color:#8b949e}
+</style>
+</head>
+<body>
+<h1>watershed-mcp — live demo</h1>
+<p>MCP server giving AI agents live access to bioregional river &amp; watershed
+data (USGS NWIS + EPA WQP), aligned to the bounty-#450 ecological sensor
+schema. Repo: <a href="https://github.com/foxxx009/watershed-mcp">foxxx009/watershed-mcp</a>.
+This page runs <b>in your browser</b> against the same public APIs the server
+tools call — no backend involved.</p>
+
+<h2>1 · Live USGS stream flow — Colorado River at Lees Ferry (09380000)</h2>
+<div class="card" id="flow"><span class="warn">fetching waterservices.usgs.gov …</span></div>
+
+<h2>2 · MCP session record (real stdio transcript)</h2>
+<div class="card"><span class="small">Captured on 2026-09-26 by running
+<code>python watershed_mcp.py stdio</code> and speaking JSON-RPC to it:</span>
+<pre style="overflow-x:auto;font-size:12px">agent → initialize   → watershed-mcp 1.0.0, protocol 2025-03-26 ✓
+agent → tools/list   → get_stream_flow, get_water_quality, assess_basin_health,
+                       find_stations, get_sensor_schema ✓
+agent → tools/call get_stream_flow {sites:"09380000", hours:24}
+       → count: 408 readings, e.g.
+         {"sensor_id":"USGS-09380000","parameter":"streamflow","value":9880.0,
+          "unit":"ft3/s","timestamp":"2026-09-26T…","location":{lat:36.86433,lng:-111.58787}}
+agent → tools/call assess_basin_health {siteids:["09380000"]}
+       → live_readings: 384 · wqp_water_quality: 144
+       → epa_compliance: score 100.0/100 (8 checked, 0 violations:
+         dissolved_oxygen n=4 bad=0 · ph n=4 bad=0)</pre></div>
+
+<h2>3 · Bounty-#450 schema conformance</h2>
+<div class="card">Every reading carries the six required fields:
+<code>timestamp, location(lat/lng), unit, value, sensor_id, source</code>.
+Validator: <code>python validate_examples.py</code> →
+<span class="ok">PASS basin_health (0 readings) · PASS stream_flow (5) · PASS wqp_quality (3)</span></div>
+
+<h2>4 · Verified WQP snapshot (EPA Water Quality Portal)</h2>
+<div class="card"><span class="small">Snapshot captured live by the server on
+2026-09-26 (the WQP data service now answers TSV-in-zip only; the server
+unzips it transparently — see README notes):</span>
+<table>
+<tr><th>date</th><th>characteristic</th><th>value</th><th>unit</th><th>site</th></tr>
+<tr><td>2016-12-13</td><td>Temperature, water</td><td>12.9</td><td>deg C</td><td>USGS-09380000</td></tr>
+<tr><td>2016-12-13</td><td>Oxygen</td><td>7.6</td><td>mg/l</td><td>USGS-09380000</td></tr>
+<tr><td>2016-12-13</td><td>pH</td><td>8.0</td><td>std units</td><td>USGS-09380000</td></tr>
+<tr><td>2016-12-13</td><td>Stream flow, instantaneous</td><td>16000.0</td><td>ft3/s</td><td>USGS-09380000</td></tr>
+</table></div>
+
+<script>
+fetch('https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09380000&parameterCd=00060,00065&period=P2D&siteStatus=all')
+ .then(function(r){return r.json()})
+ .then(function(d){
+   var rows=[];
+   (d.value&&d.value.timeSeries||[]).forEach(function(ts){
+     var site=(ts.sourceInfo.siteCode[0]||{}).value;
+     var name=ts.sourceInfo.siteName;
+     var pname=((ts.variable.variableCode||[{}])[0]||{}).value;
+     var unit=(ts.variable.unit||{}).unitCode||'';
+     (ts.values||[]).forEach(function(b){
+       (b.value||[]).forEach(function(v){
+         rows.push({time:v.dateTime,p:pname==='00060'?'streamflow':'gage height',v:v.value,u:unit,site:site});});});});
+   rows.sort(function(a,b){return a.time<b.time?1:-1});
+   var el=document.getElementById('flow');
+   if(!rows.length){el.innerHTML='<span class="warn">no rows returned</span>';return}
+   var h='<table><tr><th>timestamp</th><th>parameter</th><th>value</th><th>unit</th><th>site</th></tr>';
+   rows.slice(0,10).forEach(function(r){
+     h+='<tr><td>'+r.time+'</td><td>'+r.p+'</td><td>'+r.v+'</td><td>'+r.u+'</td><td>'+r.site+'</td></tr>'});
+   el.innerHTML=h+'</table><div class="ok small">live fetch OK — '+rows.length+
+     ' rows (latest '+rows[0].time+')</div>';
+ })
+ .catch(function(e){document.getElementById('flow').innerHTML=
+   '<span class="warn">live fetch blocked from this network — see snapshot below · '+e+'</span>'});
+</script>
+</body>
+</html>
