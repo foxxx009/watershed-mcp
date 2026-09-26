@@ -1,0 +1,54 @@
+{
+  "generated": "2026-09-26T21:08:30Z",
+  "source_note": "snapshot of EPA WQP output via watershed-mcp",
+  "readings": [
+    {
+      "sensor_id": "USGS-09380000",
+      "source": "EPA Water Quality Portal (WQX/NWIS)",
+      "parameter": "Temperature, water",
+      "usgs_pcode": "00010",
+      "value": 12.9,
+      "unit": "deg C",
+      "timestamp": "2016-12-13",
+      "location": {
+        "lat": null,
+        "lng": null
+      },
+      "site_name": null,
+      "sample_fraction": "",
+      "provider": "NWIS"
+    },
+    {
+      "sensor_id": "USGS-09380000",
+      "source": "EPA Water Quality Portal (WQX/NWIS)",
+      "parameter": "Oxygen",
+      "usgs_pcode": "00300",
+      "value": 7.6,
+      "unit": "mg/l",
+      "timestamp": "2016-12-13",
+      "location": {
+        "lat": null,
+        "lng": null
+      },
+      "site_name": null,
+      "sample_fraction": "Dissolved",
+      "provider": "NWIS"
+    },
+    {
+      "sensor_id": "USGS-09380000",
+      "source": "EPA Water Quality Portal (WQX/NWIS)",
+      "parameter": "pH",
+      "usgs_pcode": "00400",
+      "value": 8.0,
+      "unit": "std units",
+      "timestamp": "2016-12-13",
+      "location": {
+        "lat": null,
+        "lng": null
+      },
+      "site_name": null,
+      "sample_fraction": "Total",
+      "provider": "NWIS"
+    }
+  ]
+}
