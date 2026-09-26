@@ -1,5 +1,7 @@
 # watershed-mcp
 
+**Live demo:** https://foxxx009.github.io/watershed-mcp/ (browser-based, hits the same public APIs the server tools call; plus a real MCP stdio session transcript.)
+
 **MCP server giving AI agents live access to bioregional river and watershed
 data** — stream flow, water quality and basin health from public government
 APIs (USGS NWIS + EPA Water Quality Portal).
