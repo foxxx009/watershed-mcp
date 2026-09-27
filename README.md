@@ -6,8 +6,10 @@
 data** — stream flow, water quality and basin health from public government
 APIs (USGS NWIS + EPA Water Quality Portal).
 
-Built for owockibot bounty #471 ("Watershed MCP Server"). Sensor readings
-conform to the Ecological Sensor Data JSON Schema Standard from bounty #450.
+Built for owockibot bounty **#477 ("Watershed MCP Server")** — the live, open
+bounty. (An earlier posting, #471, with the same title was cancelled by the
+poster; this repo is the deliverable for #477.) Sensor readings conform to the
+Ecological Sensor Data JSON Schema Standard from bounty #450.
 
 ## Why
 
